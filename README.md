@@ -12,6 +12,7 @@
 - (Im)mutability is not communicated well because JSR-305 annotation fall into 3rd party library group
 - Requirement "No talk title has numbers in it." was important for Regexps. No additional validation took place in entities.
 - I didn't implement complete Equals/HashCode and Comparator, only parts that are needed for app. Normally it can be done well using Guava + Guava TestUtils.
+- I made solution (pretty) generic since often we're doing conference and meetup planning :)
 
 # Testing
 - Code coverage is close to 100% because of TDD

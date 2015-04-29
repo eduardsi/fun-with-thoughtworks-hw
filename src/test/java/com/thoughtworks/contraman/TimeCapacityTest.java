@@ -20,25 +20,11 @@ public class TimeCapacityTest {
     }
 
     @Test
-    public void isKnownIfNotZero() {
-        assertThat(capacity(1).isUnknown(), is(false));
-    }
-
-    @Test
-    public void supportsConstructionWithUnknownCapacity() {
-        TimeCapacity unknownCapacity = TimeCapacity.unknownCapacity();
-
-        assertThat(unknownCapacity, is(capacity(0)));
-        assertThat(unknownCapacity.isUnknown(), is(true));
-        assertThat(unknownCapacity.isUnknown(), is(true));
-    }
-
-    @Test
     public void producesToStringWithUnits() {
         assertThat(capacity(0).toString(), is("0min"));
         assertThat(capacity(1).toString(), is("1min"));
     }
-    
+
     @Test
     public void exposesDuration() {
         assertThat(capacity(1).asDuration(), is(Duration.ofMinutes(1)));

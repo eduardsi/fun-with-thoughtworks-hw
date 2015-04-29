@@ -4,13 +4,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.thoughtworks.contraman.TimeCapacity.unknownCapacity;
-
 class Timeslot {
 
-    private static final LocalTime INFINITE = LocalTime.MAX;
-
-    private final LocalTime startsNoEarlierThan;
+    private final LocalTime startsAt;
     private final LocalTime endsNoEarlierThan;
     private final LocalTime endsNoLaterThan;
 
@@ -21,40 +17,54 @@ class Timeslot {
     private final EventType type;
     private final Collection<Event> events = new ArrayList<>();
 
-    private Timeslot(EventType type, LocalTime startsNoEarlierThan, LocalTime endsNoEarlierThan, LocalTime endsNoLaterThan) {
-
-        this.minimal = new TimeCapacity(startsNoEarlierThan, endsNoEarlierThan);
+    public Timeslot(EventType type, LocalTime startsAt, LocalTime endsNoEarlierThan, LocalTime endsNoLaterThan) {
+        this.minimal = new TimeCapacity(startsAt, endsNoEarlierThan);
         this.reserved = new TimeCapacity(endsNoEarlierThan, endsNoLaterThan);
         this.total = minimal.plus(reserved);
 
         this.type = type;
-        this.startsNoEarlierThan = startsNoEarlierThan;
+        this.startsAt = startsAt;
         this.endsNoEarlierThan = endsNoEarlierThan;
         this.endsNoLaterThan = endsNoLaterThan;
-        
-        type.reserve();
-        
-        if (type == EventType.LUNCH || type == EventType.NETWORKING) {
-            reserveMinimalCapacityOrNothingIfEndTimeIsNotKnown();
-        }
     }
 
-    public boolean fits(Talk talk) {
-        return free().largerOrEqualTo(talk.duration());
+    public LocalTime startsAt() {
+        return startsAt;
     }
 
-    public void reserve(Talk talk) {
-        reserve(talk.title(), talk.duration());
+    public Collection<Event> events() {
+        return events;
     }
 
-    private void reserveMinimalCapacityOrNothingIfEndTimeIsNotKnown() {
-        TimeCapacity occupy = isEndTimeUnknown() ? unknownCapacity() : minimal;
-        reserve(type().toString(), occupy);
+    public EventType type() {
+        return type;
     }
 
-    private void reserve(String title, TimeCapacity capacity) {
+    public boolean fits(TimeCapacity timeCapacity) {
+        return free().largerOrEqualTo(timeCapacity);
+    }
+
+    public void reserve(String title) {
+        TimeCapacity capacity = endsAtUnknownTime() ? TimeCapacity.ZERO : minimal;
+        reserve(title, capacity);
+    }
+
+    private boolean endsAtUnknownTime() {
+        return endsNoEarlierThan.equals(LocalTime.MAX) && endsNoLaterThan.equals(LocalTime.MAX);
+    }
+
+    public void reserve(String title, TimeCapacity capacity) {
         Event event = new Event(title, busyUntil(), capacity);
         events.add(event);
+    }
+
+
+    public boolean hasGaps() {
+        return occupied().lessThan(minimal);
+    }
+
+    public LocalTime busyUntil() {
+        return startsAt().plus(occupied().asDuration());
     }
 
     private TimeCapacity free() {
@@ -62,38 +72,7 @@ class Timeslot {
     }
 
     private TimeCapacity occupied() {
-        return events.stream().map(Event::duration).reduce(new TimeCapacity(0), TimeCapacity::plus);
+        return events.stream().map(Event::duration).reduce(TimeCapacity.ZERO, TimeCapacity::plus);
     }
 
-    private boolean isEndTimeUnknown() {
-        return endsNoEarlierThan.equals(INFINITE) && endsNoLaterThan.equals(INFINITE);
-    }
-
-    public LocalTime startsAt() {
-        return startsNoEarlierThan;
-    }
-
-    public LocalTime busyUntil() {
-        return startsAt().plus(occupied().asDuration());
-    }
-
-    public Collection<Event> events() {
-        return events;
-    }
-
-    public boolean hasGaps() {
-        return occupied().lessThan(minimal);
-    }
-
-    public EventType type() {
-        return type;
-    }
-
-    public static Timeslot withKnownEndTime(EventType type, LocalTime startsNoEarlierThan, LocalTime endsNoEarlierThan, LocalTime endsNoLaterThan) {
-        return new Timeslot(type, startsNoEarlierThan, endsNoEarlierThan, endsNoLaterThan);
-    }
-
-    public static Timeslot withUnknownEndTime(EventType type, LocalTime startsNoEarlierThan) {
-        return new Timeslot(type, startsNoEarlierThan, INFINITE, INFINITE);
-    }
 }

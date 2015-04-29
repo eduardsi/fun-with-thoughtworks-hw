@@ -3,35 +3,40 @@ package com.thoughtworks.contraman;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Optional;
+
+import static java.util.Arrays.stream;
 
 class Timetable {
 
     private final List<Track> tracks = new LinkedList<>();
 
-    public Timetable(TimeConstraints constraints, Talks talks) {
-        TalkConsumer talkConsumer = new TalkConsumer(talks.longestFirst());
-        buildNewTrack(constraints, talkConsumer);
+    private final TalkConsumer talks;
+    private final TimeConstraints timeConstraints;
+    private final TimeReserverFinder timeReserverFinder;
+
+    public Timetable(TimeConstraints timeConstraints, Talks talksToFit) {
+        this.timeConstraints = timeConstraints;
+        this.talks = new TalkConsumer(talksToFit.longestFirst());
+
+        this.timeReserverFinder = new CompositeTimeReserverFinder(
+                new SessionTimeReserver(talks),
+                new NetworkingTimeReserver(),
+                new LunchTimeReserver());
+
+        buildNewTrack();
     }
 
-    private void buildNewTrack(TimeConstraints constraints, TalkConsumer talks) {
+    private void buildNewTrack() {
+        addTrack();
 
-        addTrack(constraints, timeslot -> {
-            timeslot.reserveTime();
-//            while ((timeslot.hasGaps() && talks.hasMoreTalks()) || talks.hasTalkThatFits(timeslot)) {
-//                Talk talkThatFits = talks.consumeOneThatFits(timeslot);
-//                timeslot.reserve(talkThatFits);
-//            }
-        });
-
-        if (talks.hasMoreTalks()) {
-            buildNewTrack(constraints, talks);
+        if (talks.hasMoreToConsume()) {
+            buildNewTrack();
         }
     }
 
-
-    private void addTrack(TimeConstraints constraints, Consumer<Timeslot> timeslotOccupier) {
-        Track track = new Track(constraints, timeslotOccupier);
+    private void addTrack() {
+        Track track = new Track(timeConstraints, timeReserverFinder);
         tracks.add(track);
     }
 
@@ -43,8 +48,49 @@ class Timetable {
         return tracks.size();
     }
 
-    public class SessionTimeReserver implements TimeReserver {
+    private class CompositeTimeReserverFinder implements TimeReserverFinder {
 
+        private final TimeReserver[] timeReservers;
+
+        public CompositeTimeReserverFinder(TimeReserver... timeReservers) {
+            this.timeReservers = timeReservers;
+        }
+
+        @Override
+        public TimeReserver findFor(Timeslot timeslot) {
+            Optional<TimeReserver> timeReserver = stream(timeReservers)
+                    .filter(reserver -> reserver.ofMatchingType(timeslot))
+                    .findAny();
+            return timeReserver.orElseThrow(() ->
+                    new IllegalStateException("Cannot find TimeReserver for timeslot of type " + timeslot.type()));
+        }
+    }
+
+    private class NetworkingTimeReserver implements TimeReserver {
+        @Override
+        public void reserveTime(Timeslot timeslot) {
+            timeslot.reserve("Networking Event");
+        }
+
+        @Override
+        public boolean ofMatchingType(Timeslot timeslot) {
+            return timeslot.type() == EventType.NETWORKING;
+        }
+    }
+
+    private class LunchTimeReserver implements TimeReserver {
+        @Override
+        public void reserveTime(Timeslot timeslot) {
+            timeslot.reserve("Lunch");
+        }
+
+        @Override
+        public boolean ofMatchingType(Timeslot timeslot) {
+            return timeslot.type() == EventType.LUNCH;
+        }
+    }
+
+    private class SessionTimeReserver implements TimeReserver {
         private final TalkConsumer talks;
 
         public SessionTimeReserver(TalkConsumer talks) {
@@ -53,10 +99,15 @@ class Timetable {
 
         @Override
         public void reserveTime(Timeslot timeslot) {
-            while ((timeslot.hasGaps() && talks.hasMoreTalks()) || talks.hasTalkThatFits(timeslot)) {
+            while ((timeslot.hasGaps() && talks.hasMoreToConsume()) || talks.hasTalkThatFits(timeslot)) {
                 Talk talkThatFits = talks.consumeOneThatFits(timeslot);
-                timeslot.reserve(talkThatFits);
+                timeslot.reserve(talkThatFits.title(), talkThatFits.duration());
             }
+        }
+
+        @Override
+        public boolean ofMatchingType(Timeslot timeslot) {
+            return timeslot.type() == EventType.SESSION;
         }
     }
 

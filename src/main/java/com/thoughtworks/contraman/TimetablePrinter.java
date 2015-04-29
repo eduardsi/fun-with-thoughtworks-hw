@@ -30,7 +30,7 @@ class TimetablePrinter {
 
     private String durationAppendix(Event event) {
         TimeCapacity duration = event.duration();
-        if (duration.isUnknown()) {
+        if (duration.equals(TimeCapacity.ZERO)) {
             return "";
         }
         return " " + duration;

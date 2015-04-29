@@ -3,7 +3,6 @@ package com.thoughtworks.contraman;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 
 import static com.thoughtworks.contraman.util.PairwiseForEach.forEachPair;
 import static java.util.stream.Collectors.toList;
@@ -12,23 +11,19 @@ class Track {
 
     private final LinkedList<Timeslot> timeslots = new LinkedList<>();
 
-    public Track(TimeConstraints constraints, Consumer<Timeslot> timeslotOccupier) {
+    public Track(TimeConstraints constraints, TimeReserverFinder timeReserverFinder) {
         forEachPair(constraints.chronologicalOrder(), (start, end) -> {
 
-            Timeslot timeslot;
             LocalTime startsAt = startsAt(start.startsNoEarlierThan);
-            if (end == null) {
-                timeslot = Timeslot.withUnknownEndTime(start.type, startsAt);
-            } else {
-                timeslot = Timeslot.withKnownEndTime(start.type, startsAt, end.startsNoEarlierThan, end.startsNoLaterThan);
-            }
 
+            LocalTime endsNoEarlierThan = end == null ? LocalTime.MAX : end.startsNoEarlierThan;
+            LocalTime endsNoLaterThan = end == null ? LocalTime.MAX : end.startsNoLaterThan;
 
+            Timeslot timeslot = new Timeslot(start.type, startsAt, endsNoEarlierThan, endsNoLaterThan);
             timeslots.add(timeslot);
 
-            if (timeslot.type() == EventType.SESSION) {
-                timeslotOccupier.accept(timeslot);
-            }
+            TimeReserver timeReserver = timeReserverFinder.findFor(timeslot);
+            timeReserver.reserveTime(timeslot);
         });
     }
 

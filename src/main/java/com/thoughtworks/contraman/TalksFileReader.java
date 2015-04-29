@@ -10,6 +10,8 @@ class TalksFileReader {
 
     private static final Pattern PATTERN = Pattern.compile("(.*?)\\s(\\d+)?(min|lightning)$");
 
+    private static final String LIGHTNING_TALK_DURATION = "5";
+
     public Talks read(Path path) throws IOException {
         Talk[] talks = Files.lines(path).map(this::talkFromLine).toArray(Talk[]::new);
         return new Talks(talks);
@@ -26,7 +28,7 @@ class TalksFileReader {
         String duration = matcher.group(2);
 
         if (duration == null) {
-            duration = "5";
+            duration = LIGHTNING_TALK_DURATION;
         }
 
         return new Talk(title, Long.valueOf(duration));

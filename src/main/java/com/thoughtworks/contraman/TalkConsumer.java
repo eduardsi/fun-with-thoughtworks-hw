@@ -15,7 +15,7 @@ class TalkConsumer {
     public Talk consumeOneThatFits(Timeslot timeslot) {
         Optional<Talk> talkThatFitsTimeslot = talks
                 .stream()
-                .filter(timeslot::fits)
+                .filter(talk -> timeslot.fits(talk.duration()))
                 .findFirst();
 
 
@@ -27,14 +27,14 @@ class TalkConsumer {
         return talk;
     }
 
-    public boolean hasMoreTalks() {
+    public boolean hasMoreToConsume() {
         return talks.size() > 0;
     }
 
     public boolean hasTalkThatFits(Timeslot timeslot) {
         return talks
                 .stream()
-                .filter(timeslot::fits)
+                .filter(talk -> timeslot.fits(talk.duration()))
                 .findFirst().isPresent();
     }
 }

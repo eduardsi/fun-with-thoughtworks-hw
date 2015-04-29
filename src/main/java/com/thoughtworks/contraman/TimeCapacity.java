@@ -7,6 +7,8 @@ import static java.time.Duration.between;
 
 public class TimeCapacity implements Comparable<TimeCapacity> {
 
+    public static final TimeCapacity ZERO = new TimeCapacity(0);
+    
     private final Duration duration;
 
     public TimeCapacity(LocalTime startsNoEarlierThan, LocalTime endsNoEarlierThan) {
@@ -38,16 +40,8 @@ public class TimeCapacity implements Comparable<TimeCapacity> {
         return -duration.compareTo(other.duration);
     }
 
-    public static TimeCapacity unknownCapacity() {
-        return new TimeCapacity(0);
-    }
-
     public Duration asDuration() {
         return duration;
-    }
-
-    public boolean isUnknown() {
-        return this.equals(unknownCapacity());
     }
 
     @Override

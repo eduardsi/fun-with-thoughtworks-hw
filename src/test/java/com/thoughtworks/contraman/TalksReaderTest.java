@@ -24,7 +24,6 @@ public class TalksReaderTest {
     Path testFileWithLightningTalks;
     Path testFileWithWrongFormat;
 
-
     TalksFileReader talksFileReader = new TalksFileReader();
 
     @Before
