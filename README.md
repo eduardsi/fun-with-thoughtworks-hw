@@ -1,5 +1,5 @@
 # Solution
-- Simple (may not be optimal) algorithm, based on ![First-fit algorithm](http://en.wikipedia.org/wiki/Bin_packing_problem) with First Fit Decreasing strategy has been chosen.
+- Simple (may not be optimal) algorithm, based on [First-fit algorithm](http://en.wikipedia.org/wiki/Bin_packing_problem) with First Fit Decreasing strategy has been chosen.
 - In DDD terms, "breakthrough" didn't happen during a number of design iterations.
 
 # Tooling
