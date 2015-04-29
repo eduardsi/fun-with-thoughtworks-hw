@@ -1,15 +1,14 @@
 package com.thoughtworks.contraman;
 
-import java.time.Duration;
 import java.time.LocalTime;
 
 class Event {
 
     private final String title;
     private final LocalTime startsAt;
-    private final Duration duration;
+    private final TimeCapacity duration;
 
-    public Event(String title, LocalTime startsAt, Duration duration) {
+    public Event(String title, LocalTime startsAt, TimeCapacity duration) {
         this.title = title;
         this.startsAt = startsAt;
         this.duration = duration;
@@ -23,7 +22,7 @@ class Event {
         return title;
     }
 
-    public Duration duration() {
+    public TimeCapacity duration() {
         return duration;
     }
 

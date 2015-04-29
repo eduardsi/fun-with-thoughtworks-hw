@@ -33,8 +33,7 @@ class Track {
     }
 
     private LocalTime startsAt(LocalTime startsNoEarlierThan) {
-        return timeslots.isEmpty() ? startsNoEarlierThan : timeslots.getLast().endsAt();
-
+        return timeslots.isEmpty() ? startsNoEarlierThan : timeslots.getLast().busyUntil();
     }
 
     public Collection<Event> events() {

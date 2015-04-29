@@ -14,7 +14,7 @@ class Talks {
     }
 
     public Collection<Talk> longestFirst() {
-        return stream(talks).sorted((it, that) -> -it.duration().compareTo(that.duration())).collect(toList());
+        return stream(talks).sorted((it, that) -> it.duration().compareTo(that.duration())).collect(toList());
     }
 
 }

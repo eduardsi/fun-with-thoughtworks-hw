@@ -11,6 +11,7 @@
 - Explicit (poka-yoke-style) argument null-checks have been omitted. JSR-305 annotation is great alternative, but fall into 3rd party library group
 - (Im)mutability is not communicated well because JSR-305 annotation fall into 3rd party library group
 - Requirement "No talk title has numbers in it." was important for Regexps. No additional validation took place in entities.
+- I didn't implement complete Equals/HashCode and Comparator, only parts that are needed for app. Normally it can be done well using Guava + Guava TestUtils.
 
 # Testing
 - Code coverage is close to 100% because of TDD

@@ -1,7 +1,6 @@
 package com.thoughtworks.contraman;
 
 import java.io.PrintWriter;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,11 +29,11 @@ class TimetablePrinter {
     }
 
     private String durationAppendix(Event event) {
-        Duration duration = event.duration();
-        if (duration.equals(Duration.ZERO)) {
+        TimeCapacity duration = event.duration();
+        if (duration.isUnknown()) {
             return "";
         }
-        return " " + duration.toMinutes() + "min";
+        return " " + duration;
     }
 
     private String formatTime(LocalTime time) {

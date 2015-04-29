@@ -10,7 +10,6 @@ import org.junit.rules.ExpectedException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.time.Duration;
 
 import static java.nio.file.Paths.get;
 import static org.hamcrest.Matchers.contains;
@@ -77,7 +76,7 @@ public class TalksReaderTest {
 
         @Override
         protected boolean matchesSafely(Talk item) {
-            return item.title().equals(title) && item.duration().equals(Duration.ofMinutes(durationInMinutes));
+            return item.title().equals(title) && item.duration().equals(new TimeCapacity(durationInMinutes));
         }
 
         @Override
@@ -88,7 +87,7 @@ public class TalksReaderTest {
 
         @Override
         protected void describeMismatchSafely(Talk item, Description mismatchDescription) {
-            mismatchDescription.appendText(item.title() + "/" + item.duration().toMinutes());
+            mismatchDescription.appendText(item.title() + "/" + item.duration());
         }
     }
 

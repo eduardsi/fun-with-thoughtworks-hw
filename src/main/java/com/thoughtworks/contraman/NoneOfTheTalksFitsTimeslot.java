@@ -17,6 +17,6 @@ class NoneOfTheTalksFitsTimeslot extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return "None of the talks " + talkNames + " fits timeslot starting at " + timeslot.startsAt() + " with capacity " + timeslot.spareCapacity().toMinutes() + "min";
+        return "None of the talks " + talkNames + " fits timeslot starting at " + timeslot.startsAt();
     }
 }

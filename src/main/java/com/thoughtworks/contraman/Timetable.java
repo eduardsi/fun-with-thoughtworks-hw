@@ -17,10 +17,11 @@ class Timetable {
     private void buildNewTrack(TimeConstraints constraints, TalkConsumer talks) {
 
         addTrack(constraints, timeslot -> {
-            while ((timeslot.hasGaps() && talks.hasMoreTalks()) || talks.hasTalkThatFits(timeslot)) {
-                Talk talkThatFits = talks.consumeOneThatFits(timeslot);
-                timeslot.occupy(talkThatFits);
-            }
+            timeslot.reserveTime();
+//            while ((timeslot.hasGaps() && talks.hasMoreTalks()) || talks.hasTalkThatFits(timeslot)) {
+//                Talk talkThatFits = talks.consumeOneThatFits(timeslot);
+//                timeslot.reserve(talkThatFits);
+//            }
         });
 
         if (talks.hasMoreTalks()) {
@@ -40,6 +41,23 @@ class Timetable {
 
     public int trackCount() {
         return tracks.size();
+    }
+
+    public class SessionTimeReserver implements TimeReserver {
+
+        private final TalkConsumer talks;
+
+        public SessionTimeReserver(TalkConsumer talks) {
+            this.talks = talks;
+        }
+
+        @Override
+        public void reserveTime(Timeslot timeslot) {
+            while ((timeslot.hasGaps() && talks.hasMoreTalks()) || talks.hasTalkThatFits(timeslot)) {
+                Talk talkThatFits = talks.consumeOneThatFits(timeslot);
+                timeslot.reserve(talkThatFits);
+            }
+        }
     }
 
 }

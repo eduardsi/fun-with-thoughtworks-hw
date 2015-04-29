@@ -149,7 +149,7 @@ public class TimetableTest {
     public void throwsExceptionIfTalkCannotBeAccommodated() {
 
         thrown.expect(NoneOfTheTalksFitsTimeslot.class);
-        thrown.expectMessage("None of the talks [A] fits timeslot starting at 09:00 with capacity 60min");
+        thrown.expectMessage("None of the talks [A] fits timeslot starting at 09:00");
 
         TimeConstraints timeConstraints = new TimeConstraints()
                 .impose("09:00", SESSION)
