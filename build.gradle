@@ -1,0 +1,36 @@
+plugins {
+    id "java"
+    id "groovy"
+    id "application"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+group = "lv.craftsmans"
+version = "1.0.0"
+mainClassName = "com.thoughtworks.contraman.App"
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    testCompile('junit:junit:4.12') {
+        exclude module: 'hamcrest-core'
+    }
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile('org.mockito:mockito-core:1.10.19') {
+        exclude module: 'hamcrest-core'
+    }
+}
+
+
+run {
+    def inputFile = System.properties["input"]
+    if (inputFile) {
+        args(inputFile)
+    }
+}
