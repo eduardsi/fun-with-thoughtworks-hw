@@ -1,5 +1,5 @@
 # Solution
-- Simple (may not be optimal) algorithm, based on [First-fit algorithm](http://en.wikipedia.org/wiki/Bin_packing_problem) with First Fit
+- Simple (may not be optimal) algorithm, based on [First-fit algorithm](http://en.wikipedia.org/wiki/Bin_packing_problem) with First Fit Descending "trick"
 
 # Tooling
 - Spock is not used for testing since Groovy was not included in allowed language list
