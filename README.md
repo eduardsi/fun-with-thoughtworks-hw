@@ -1,6 +1,6 @@
 # Solution
 - Simple (may not be optimal) algorithm, based on [First-fit algorithm](http://en.wikipedia.org/wiki/Bin_packing_problem) with First Fit Decreasing strategy has been chosen.
-- In DDD terms, "breakthrough" didn't happen during a number of design iterations.
+- In DDD terms, "breakthrough" didn't happen during a number of design iterations :)
 
 # Tooling
 - Spock was not used for testing because Groovy was not included in allowed language list
