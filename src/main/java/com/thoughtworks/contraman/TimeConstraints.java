@@ -6,7 +6,7 @@ import java.util.List;
 import static java.time.LocalTime.parse;
 import static java.util.stream.Collectors.toList;
 
-public class TimeConstraints {
+class TimeConstraints {
 
     private final List<TimeConstraint> constraints = new ArrayList<>();
 

@@ -1,6 +1,6 @@
 package com.thoughtworks.contraman;
 
-public class Talk {
+class Talk {
 
     private final String title;
     private final TimeCapacity duration;

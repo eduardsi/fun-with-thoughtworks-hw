@@ -1,6 +1,6 @@
 package com.thoughtworks.contraman;
 
-public interface TimeReserver {
+interface TimeReserver {
     
     void reserveTime(Timeslot timeslot);
 

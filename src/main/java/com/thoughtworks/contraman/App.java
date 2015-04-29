@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 import static com.thoughtworks.contraman.EventType.*;
 
-public class App {
+class App {
 
     private final Path inputFile;
 
